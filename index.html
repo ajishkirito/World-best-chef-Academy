@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>World Best Chef Academy - Secure HTTPS Pro</title>
+    <style>
+        :root {
+            --primary: #d97706;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --accent: #0284c7;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-light); color: var(--text-dark); padding: 12px; padding-bottom: 80px; min-height: 100vh; background-size: cover; background-position: center; background-attachment: fixed; }
+        .container { max-width: 600px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 12px; background: rgba(255,255,255,0.95); padding: 8px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        header h1 { font-size: 20px; color: var(--primary); margin-bottom: 2px; }
+        header p { color: var(--text-muted); font-size: 11px; }
+
+        .card { background-color: var(--card-bg); border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .card h2 { font-size: 15px; margin-bottom: 10px; border-bottom: 2px solid var(--primary); padding-bottom: 4px; color: var(--text-dark); }
+
+        #loginScreen { text-align: center; padding: 25px 15px; background: rgba(255,255,255,0.98); border-radius: 10px; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .login-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; background: #fff; color: #000; }
+        .google-btn { background: #fff; color: #333; border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-size: 13px; margin-top: 8px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; text-align: center; }
+        .stat-box { background: #f1f5f9; padding: 6px; border-radius: 6px; }
+        .stat-value { font-size: 14px; font-weight: bold; color: var(--primary); }
+        .stat-label { font-size: 9px; color: var(--text-muted); }
+
+        .task-item { display: flex; align-items: center; margin-bottom: 6px; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .task-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; margin-right: 8px; }
+        .task-info { flex-grow: 1; }
+        .task-title { font-size: 12px; font-weight: 600; }
+        .task-time { font-size: 9px; color: var(--text-muted); }
+
+        .tab-menu { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 8px 4px; box-shadow: 0 -2px 8px rgba(0,0,0,0.1); z-index: 1000; border-top: 1px solid var(--border-color); }
+        .tab-btn { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 9px; font-weight: 600; }
+        .tab-btn span { font-size: 16px; margin-bottom: 1px; }
+        .tab-btn.active { color: var(--primary); }
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+
+        .chat-box { height: 150px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; overflow-y: auto; margin-bottom: 8px; font-size: 11px; }
+        .chat-input-group { display: flex; gap: 6px; }
+        input[type="text"], input[type="time"] { width: 100%; background: #ffffff; border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; font-size: 11px; }
+        .btn { background-color: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px; }
+
+        .profile-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #e2e8f0; }
+        .follow-stats { display: flex; justify-content: center; gap: 15px; margin: 8px 0; font-size: 12px; font-weight: bold; }
+        
+        .recipe-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .recipe-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; text-align: center; cursor: pointer; position: relative; }
+        .recipe-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 4px; }
+        .recipe-title { font-size: 11px; font-weight: 600; }
+        .lock-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 2px 5px; border-radius: 4px; font-size: 9px; }
+
+        #recipeDetailView { display: none; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; }
+        .back-btn { background: #e2e8f0; color: var(--text-dark); border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 10px; font-size: 10px; }
+        
+        .chat-list-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: #f8fafc; border-radius: 6px; margin-bottom: 6px; cursor: pointer; border: 1px solid var(--border-color); }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; background: #cbd5e1; }
+        .dm-container { display: none; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
+        
+        video { width: 100%; border-radius: 6px; background: #000; height: 200px; object-fit: cover; margin-bottom: 8px; }
+        .upload-options-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 10px; display: none; }
+
+        .cert-box { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px dashed var(--primary); padding: 15px; border-radius: 8px; text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🍳 World Best Chef Academy</h1>
+        <p>15,000 Recipes | 200 Levels | Secure HTTPS Pro</p>
+    </header>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen">
+        <h2>🔐 Chef Login / Register</h2>
+        <p style="margin-bottom: 12px; font-size: 11px; color: var(--text-muted);">உங்களது விவரங்களை உள்ளிட்டு உள்நுழையவும்</p>
+        
+        <input type="text" id="firstName" class="login-input" placeholder="First Name (முதல் பெயர்)*">
+        <input type="text" id="lastName" class="login-input" placeholder="Last Name (கடைசிப் பெயர்)*">
+        <input type="text" id="phoneInput" class="login-input" placeholder="Phone Number (தொலைபேசி எண்)*">
+        <button class="btn" style="width: 100%; margin-bottom: 8px;" onclick="handleManualLogin()">Login / Register 🚀</button>
+        
+        <div style="font-size: 10px; color: var(--text-muted); margin: 6px 0;">(அல்லது)</div>
+        
+        <button class="google-btn" onclick="handleGoogleLogin()">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.15C3.17 21.31 7.24 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.19C.43 8.13 0 9.87 0 11.75s.43 3.62 1.19 5.14l4.08-2.65z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.17 2.69 1.19 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+            Continue with Google
+        </button>
+    </div>
+
+    <!-- MAIN APP INTERFACE -->
+    <div id="mainApp" style="display: none;">
+        
+        <!-- TAB 1: HOME & ROUTINE -->
+        <div id="home" class="section-content active">
+            <div class="card">
+                <div class="stats-grid">
+                    <div class="stat-box"><div class="stat-value" id="levelVal">Level 1</div><div class="stat-label">Level (Max 200)</div></div>
+                    <div class="stat-box"><div class="stat-value" id="xpVal">0 XP</div><div class="stat-label">XP</div></div>
+                    <div class="stat-box"><div class="stat-value" id="recipeUnlocked">100</div><div class="stat-label">Recipes</div></div>
+                </div>
+            </div>
+
+            <div class="card" id="certCard" style="display: none;">
+                <h2>🏆 Grand Reward Unlocked!</h2>
+                <div class="cert-box">
+                    <h3 style="color: var(--primary); font-size: 14px; margin-bottom: 4px;">🎓 Master Chef Certificate</h3>
+                    <p style="font-size: 11px; color: var(--text-dark); margin-bottom: 6px;" id="certText">Congratulations!</p>
+                    <p style="font-size: 9px; color: var(--text-muted);">You have successfully completed all 200 Levels & 15,000 Recipes!</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>➕ Custom Task & Timing Setter</h2>
+                <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                    <input type="time" id="customTimeInput" style="width: 35%;">
+                    <input type="text" id="customTaskInput" placeholder="டாஸ்க் பெயர்..." style="width: 65%;">
+                </div>
+                <button class="btn" onclick="addNewCustomTask()" style="width: 100%;">Add My Task 🎯</button>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Daily Masterclass Tasks (+50 XP)</h2>
+                <div id="taskListContainer">
+                    <div class="task-item">
+                        <input type="checkbox" class="task-chk" onclick="verifyAndCheck(this)">
+                        <div class="task-info">
+                            <div class="task-title">05:00 AM: Stamina & Strength Workout</div>
+                            <div class="task-time">Core, Squats & Wrist Rotations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: RECIPES -->
+        <div id="recipes" class="section-content">
+            <div class="card" id="recipeListView">
+                <h2>📖 World Cuisine Vault (15,000 Recipes)</h2>
+                <div class="recipe-grid" id="recipeGridContainer"></div>
+            </div>
+
+            <div id="recipeDetailView">
+                <button class="back-btn" onclick="backToRecipeList()">← Back</button>
+                <h2 id="detailTitle" style="color: var(--primary); margin-bottom: 8px;">Recipe Title</h2>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">⏱️ <b>Cooking Time:</b> <span id="detailTime"></span></p>
+                
+                <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 8px;">
+                    <h3 style="font-size: 12px; color: var(--primary); margin-bottom: 4px;">🥦 1. Required Ingredients & Measurements:</h3>
+                    <p id="detailIngredients" style="font-size: 11px; line-height: 1.4; white-space: pre-line;"></p>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 8px;">
+                    <h3 style="font-size: 12px; color: var(--primary); margin-bottom: 4px;">📝 2. Step-by-Step Method:</h3>
+                    <p id="detailSteps" style="font-size: 11px; line-height: 1.4; white-space: pre-line;"></p>
+                </div>
+
+                <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                    <h3 style="font-size: 12px; color: var(--primary); margin-bottom: 4px;">🍽️ 3. Serving Guide:</h3>
+                    <p id="detailServing" style="font-size: 11px; line-height: 1.4; white-space: pre-line;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: REELS, STORIES & LIVE CAMERA STUDIO -->
+        <div id="reels" class="section-content">
+            <div class="card" style="text-align: center;">
+                <h2>🎬 Chef Studio & Live Camera</h2>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">ரீல்ஸ், ஸ்டோரி அல்லது நேரலை கேமராவை இயக்கவும்:</p>
+                
+                <button class="btn" onclick="toggleUploadMenu()" style="font-size: 15px; padding: 10px 20px; margin-bottom: 12px; background: var(--accent);">
+                    ➕ Create / Upload (Reel, Story, Live)
+                </button>
+
+                <div class="upload-options-card" id="uploadMenuCard">
+                    <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px; color: var(--primary);">தேர்ந்தெடுக்கவும் (Order-wise):</div>
+                    <button class="btn" onclick="openReelUploader()" style="width: 100%; margin-bottom: 6px; background: #f97316;">1. 🎥 Upload Reel (வீடியோ ரீல்)</button>
+                    <button class="btn" onclick="openStoryUploader()" style="width: 100%; margin-bottom: 6px; background: #8b5cf6;">2. 📸 Upload Story (புகைப்படம் / ஸ்டோரி)</button>
+                    <button class="btn" onclick="startCamera()" style="width: 100%; background: var(--success);">3. 🔴 Live Camera Coach (நேரலை கேமரா)</button>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <video id="webcam" autoplay playsinline muted></video>
+                    <p id="cameraStatus" style="font-size: 10px; color: var(--text-muted); margin-top: 4px;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: MESSAGES -->
+        <div id="messages" class="section-content">
+            <div class="card" id="chatListView">
+                <h2>💬 Direct Messages & Groups</h2>
+                <div style="margin-bottom: 8px;">
+                    <button class="btn" onclick="openGroupChat()" style="width: 100%; background: var(--accent);">👥 Masterclass Group Chat</button>
+                </div>
+                <div id="followingListContainer"></div>
+            </div>
+
+            <div class="dm-container" id="activeChatView">
+                <button class="back-btn" onclick="backToChatList()">← Back</button>
+                <h2 id="chatWithTitle" style="color: var(--primary); margin-bottom: 8px;">Chat</h2>
+                <div class="chat-box" id="dmChatBox"><div><b>System:</b> Chat started.</div></div>
+                <div class="chat-input-group">
+                    <input type="text" id="dmUserInput" placeholder="Type message...">
+                    <button class="btn" onclick="sendDMMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: AI COACH -->
+        <div id="aiChat" class="section-content">
+            <div class="card">
+                <h2>🤖 Gemini AI Kitchen Coach</h2>
+                <div class="chat-box" id="aiChatBox"><div><b>AI:</b> Ask your cooking doubts instantly!</div></div>
+                <div class="chat-input-group">
+                    <input type="text" id="userInput" placeholder="Ask cooking doubt...">
+                    <button class="btn" onclick="sendToAI()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: PROFILE -->
+        <div id="profile" class="section-content">
+            <div class="card" style="text-align: center;">
+                <h2>👤 Profile & Settings</h2>
+                <div style="margin: 10px 0;">
+                    <img id="profileImagePreview" class="profile-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb" alt="Profile">
+                    <div style="margin-top: 6px;"><input type="file" accept="image/*" style="font-size: 10px;" onchange="updateProfilePic(event)"></div>
+                </div>
+                <p id="profileName" style="font-size: 15px; font-weight: bold; color: var(--primary);">Chef</p>
+                <p id="profilePhoneDisplay" style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;"></p>
+                
+                <div class="follow-stats">
+                    <div>Followers: <span style="color: var(--primary);">142</span></div>
+                    <div>Following: <span style="color: var(--primary);">38</span></div>
+                </div>
+
+                <div style="margin-top: 10px; text-align: left; background: #f1f5f9; padding: 8px; border-radius: 6px;">
+                    <label style="font-size: 11px; font-weight: bold;">🎨 App Wallpaper:</label>
+                    <input type="file" accept="image/*" style="margin-top: 4px; font-size: 10px;" onchange="changeWallpaper(event)">
+                </div>
+
+                <button class="btn" onclick="handleLogout()" style="background-color: var(--danger); margin-top: 12px; width: 100%;">Logout</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="tab-menu" id="bottomNav" style="display: none;">
+        <button class="tab-btn active" onclick="switchTab('home', this)"><span>🏠</span>Home</button>
+        <button class="tab-btn" onclick="switchTab('recipes', this)"><span>📖</span>Recipes</button>
+        <button class="tab-btn" onclick="switchTab('reels', this)"><span>➕</span>Reels</button>
+        <button class="tab-btn" onclick="switchTab('messages', this)"><span>💬</span>Messages</button>
+        <button class="tab-btn" onclick="switchTab('aiChat', this)"><span>🤖</span>AI Coach</button>
+        <button class="tab-btn" onclick="switchTab('profile', this)"><span>👤</span>Profile</button>
+    </div>
+</div>
+
+<script>
+let currentUser = "";
+let currentLevel = 1;
+let totalXP = 0;
+let unlockedRecipes = 100;
+
+const recipeImages = [
+    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
+    'https://images.unsplash.com/photo-1540420773420-3366772f4999',
+    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
+    'https://images.unsplash.com/photo-1572449043416-55f4685c9bb7',
+    'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445',
+    'https://images.unsplash.com/photo-1547592166-23ac45744acd',
+    'https://images.unsplash.com/photo-1541544741938-0af808871cc0'
+];
+
+const followingChefs = [
+    { name: 'Chef Alex', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb' },
+    { name: 'Chef Priya', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9' }
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+    try {
+        let savedUser = localStorage.getItem('chefUserName');
+        let savedPhone = localStorage.getItem('chefUserPhone');
+        if (savedUser) {
+            currentUser = savedUser;
+            document.getElementById('profileName').innerText = currentUser;
+            if(savedPhone) document.getElementById('profilePhoneDisplay').innerText = "Phone: " + savedPhone;
+            
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('bottomNav').style.display = 'flex';
+            renderRecipes();
+            renderFollowingList();
+        }
+    } catch(e) {}
+});
+
+function handleManualLogin() {
+    let fName = document.getElementById('firstName').value.trim();
+    let lName = document.getElementById('lastName').value.trim();
+    let phone = document.getElementById('phoneInput').value.trim();
+
+    if(!fName || !phone) {
+        alert("தயவுசெய்து முதல் பெயர் மற்றும் தொலைபேசி எண்ணை உள்ளிடவும்!");
+        return;
+    }
+
+    currentUser = fName + (lName ? " " + lName : "");
+    try {
+        localStorage.setItem('chefUserName', currentUser);
+        localStorage.setItem('chefUserPhone', phone);
+    } catch(e) {}
+
+    document.getElementById('profileName').innerText = currentUser;
+    document.getElementById('profilePhoneDisplay').innerText = "Phone: " + phone;
+    
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('bottomNav').style.display = 'flex';
+    renderRecipes();
+    renderFollowingList();
+}
+
+function handleGoogleLogin() {
+    currentUser = "Chef Google User";
+    try {
+        localStorage.setItem('chefUserName', currentUser);
+        localStorage.setItem('chefUserPhone', "Google Verified");
+    } catch(e) {}
+    
+    document.getElementById('profileName').innerText = currentUser;
+    document.getElementById('profilePhoneDisplay').innerText = "Phone: Google Verified";
+    
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('bottomNav').style.display = 'flex';
+    renderRecipes();
+    renderFollowingList();
+}
+
+function handleLogout() {
+    try { localStorage.clear(); } catch(e) {}
+    location.reload();
+}
+
+function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if(btnElement) btnElement.classList.add('active');
+}
+
+function toggleUploadMenu() {
+    let menu = document.getElementById('uploadMenuCard');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+function openReelUploader() {
+    alert("🎥 ரீல்ஸ் வீடியோவை அப்லோட் செய்ய க்கலரி திறக்கப்படுகிறது...");
+}
+
+function openStoryUploader() {
+    alert("📸 ஸ்டோரி புகைப்படம் எடுக்க / அப்லோட் செய்ய கேமரா திறக்கப்படுகிறது...");
+}
+
+function startCamera() {
+    let video = document.getElementById('webcam');
+    let statusText = document.getElementById('cameraStatus');
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        statusText.innerText = "கேமரா அனுமதி கோரப்படுகிறது...";
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+            .then(stream => { 
+                video.srcObject = stream; 
+                statusText.innerText = "🟢 லைவ் கேமரா வெற்றிகரமாக இயக்கப்படுகிறது!";
+            })
+            .catch(err => { 
+                console.error(err);
+                statusText.innerText = "❌ கேமரா அனுமதி மறுக்கப்பட்டது அல்லது பிழை!";
+                alert("⚠️ குரோம் பிரவுசர் செட்டிங்ஸில் (Site Settings) கேமரா அனுமதியை 'Allow' செய்யவும்.");
+            });
+    } else {
+        alert("உங்கள் பிரவுசர் கேமரா வசதியை ஆதரிக்கவில்லை.");
+    }
+}
+
+function addNewCustomTask() {
+    let timeVal = document.getElementById('customTimeInput').value;
+    let taskName = document.getElementById('customTaskInput').value.trim();
+    if(!taskName) { alert("தயவுசெய்து டாஸ்க் பெயரை உள்ளிடவும்!"); return; }
+    if(!timeVal) timeVal = "08:00 AM";
+
+    let container = document.getElementById('taskListContainer');
+    let div = document.createElement('div');
+    div.className = 'task-item';
+    div.innerHTML = `
+        <input type="checkbox" class="task-chk" onclick="verifyAndCheck(this)">
+        <div class="task-info">
+            <div class="task-title">${timeVal} - ${taskName}</div>
+            <div class="task-time">Custom Student Masterclass Task</div>
+        </div>
+    `;
+    container.appendChild(div);
+    document.getElementById('customTaskInput').value = '';
+    document.getElementById('customTimeInput').value = '';
+    alert("உங்கள் புதிய டாஸ்க் வெற்றிகரமாக சேர்க்கப்பட்டது! 👍");
+}
+
+function renderFollowingList() {
+    let list = document.getElementById('followingListContainer');
+    list.innerHTML = '';
+    followingChefs.forEach(chef => {
+        let item = document.createElement('div');
+        item.className = 'chat-list-item';
+        item.innerHTML = `<img src="${chef.avatar}" class="avatar"><div><div style="font-weight:bold;font-size:12px;">${chef.name}</div><div style="font-size:10px;color:var(--text-muted);">Tap to message directly</div></div>`;
+        item.onclick = () => openChat(chef.name);
+        list.appendChild(item);
+    });
+}
+
+function openChat(name) {
+    document.getElementById('chatListView').style.display = 'none';
+    document.getElementById('activeChatView').style.display = 'block';
+    document.getElementById('chatWithTitle').innerText = "💬 " + name;
+}
+
+function openGroupChat() {
+    document.getElementById('chatListView').style.display = 'none';
+    document.getElementById('activeChatView').style.display = 'block';
+    document.getElementById('chatWithTitle').innerText = "👥 Masterclass Group";
+}
+
+function backToChatList() {
+    document.getElementById('activeChatView').style.display = 'none';
+    document.getElementById('chatListView').style.display = 'block';
+}
+
+function sendDMMessage() {
+    let input = document.getElementById('dmUserInput');
+    let box = document.getElementById('dmChatBox');
+    if(!input.value.trim()) return;
+    box.innerHTML += `<div><b>You:</b> ${input.value}</div>`;
+    input.value = '';
+    setTimeout(() => {
+        box.innerHTML += `<div><b>Chef:</b> அருமை! 👍</div>`;
+        box.scrollTop = box.scrollHeight;
+    }, 500);
+}
+
+function verifyAndCheck(chk) {
+    if (chk.checked) {
+        chk.checked = false;
+        if(confirm("📸 கேமரா மூலம் டாஸ்க்கைச் செய்து காட்டவும்!")) {
+            switchTab('reels', document.querySelectorAll('.tab-btn')[2]);
+            startCamera();
+        } else {
+            totalXP += 50;
+            currentLevel = Math.min(200, Math.floor(totalXP / 100) + 1);
+            unlockedRecipes = 100 + ((currentLevel - 1) * 100);
+            
+            document.getElementById('xpVal').innerText = totalXP + ' XP';
+            document.getElementById('levelVal').innerText = 'Level ' + currentLevel;
+            document.getElementById('recipeUnlocked').innerText = unlockedRecipes;
+
+            if (currentLevel >= 200) {
+                document.getElementById('certCard').style.display = 'block';
+                document.getElementById('certText').innerText = `Awarded to Chef ${currentUser} for mastering Level 200 & 15,000 Recipes!`;
+            }
+            renderRecipes();
+        }
+    }
+}
+
+function renderRecipes() {
+    const grid = document.getElementById('recipeGridContainer');
+    grid.innerHTML = '';
+    
+    let totalAvailableRecipes = 100 + ((currentLevel - 1) * 100);
+    
+    for(let i = 1; i <= Math.min(60, totalAvailableRecipes); i++) {
+        let recipeLevel = i <= 100 ? 1 : Math.ceil((i - 100) / 100) + 1;
+        let isLocked = recipeLevel > currentLevel;
+        let imgUrl = recipeImages[(i - 1) % recipeImages.length];
+
+        let card = document.createElement('div');
+        card.className = 'recipe-card';
+        card.innerHTML = `
+            ${isLocked ? `<div class="lock-badge">🔒 Lvl ${recipeLevel}</div>` : ''}
+            <img src="${imgUrl}" alt="Recipe">
+            <div class="recipe-title">Master Recipe #${i}</div>
+        `;
+        
+        if (!isLocked) {
+            card.onclick = () => openRecipeDetail(i);
+        } else {
+            card.onclick = () => alert(`🔒 இந்த ரெசிபி Level ${recipeLevel}-ல் அன்லாக் ஆகும்!`);
+        }
+        grid.appendChild(card);
+    }
+}
+
+function openRecipeDetail(id) {
+    document.getElementById('recipeListView').style.display = 'none';
+    document.getElementById('recipeDetailView').style.display = 'block';
+    document.getElementById('detailTitle').innerText = `Master Recipe #${id} Complete Guide`;
+    document.getElementById('detailTime').innerText = "20 Mins";
+    document.getElementById('detailIngredients').innerText = "• 250g Main Veggies / Ingredients (அளவுகள்)\n• 2 Spoons Chef Special Spices\n• 50ml Cooking Oil / Butter";
+    document.getElementById('detailSteps').innerText = "1. 00:00 Min: பாத்திரத்தை சூடாக்கி எண்ணெய் ஊற்றவும்.\n2. 02:00 Min: நறுக்கிய காய்கறிகளைச் சேர்த்து வதக்கவும்.\n3. 05:00 Min: மசாலாப் பொருட்களைச் சேர்த்து மிதமான தீயில் வேகவிடவும்.";
+    document.getElementById('detailServing').innerText = "• சூடாக பரிமாறவும்.\n• மேலே கொத்தமல்லி தழை மற்றும் எலுமிச்சை சாறு தூவி அலங்கரிக்கவும்.";
+}
+
+function backToRecipeList() {
+    document.getElementById('recipeDetailView').style.display = 'none';
+    document.getElementById('recipeListView').style.display = 'block';
+}
+
+function updateProfilePic(e) {
+    let f = e.target.files[0];
+    if(f) {
+        let r = new FileReader();
+        r.onload = (ev) => { document.getElementById('profileImagePreview').src = ev.target.result; };
+        r.readAsDataURL(f);
+    }
+}
+
+function changeWallpaper(e) {
+    let f = e.target.files[0];
+    if(f) {
+        let r = new FileReader();
+        r.onload = (ev) => { document.body.style.backgroundImage = `url('${ev.target.result}')`; };
+        r.readAsDataURL(f);
+    }
+}
+
+function sendToAI() {
+    let input = document.getElementById('userInput');
+    let box = document.getElementById('aiChatBox');
+    if(!input.value.trim()) return;
+    box.innerHTML += `<div><b>You:</b> ${input.value}</div>`;
+    input.value = '';
+    setTimeout(() => {
+        box.innerHTML += `<div><b>AI:</b> இந்தச் சமையல் குறிப்பு மிக நன்று! உப்புக் கவனமாகக் குறைக்கவும்.</div>`;
+        box.scrollTop = box.scrollHeight;
+    }, 500);
+}
+</script>
+
+</body>
+</html>
